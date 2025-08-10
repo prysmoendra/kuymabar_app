@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="300dp"
+    android:height="300dp"
+    android:viewportWidth="300"
+    android:viewportHeight="300">
+    
+    <!-- Background circle -->
+    <path
+        android:fillColor="#E3F2FD"
+        android:pathData="M150,150 m-140,0 a140,140 0 1,0 280,0 a140,140 0 1,0 -280,0" />
+    
+    <!-- People icons representing sparring -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M100,120 m-20,0 a20,20 0 1,0 40,0 a20,20 0 1,0 -40,0" />
+    
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M200,120 m-20,0 a20,20 0 1,0 40,0 a20,20 0 1,0 -40,0" />
+    
+    <!-- Connection line -->
+    <path
+        android:strokeColor="#2196F3"
+        android:strokeWidth="3"
+        android:pathData="M140,120 L180,120" />
+        
+</vector> 

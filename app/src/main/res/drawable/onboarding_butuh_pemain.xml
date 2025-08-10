@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="300dp"
+    android:height="300dp"
+    android:viewportWidth="300"
+    android:viewportHeight="300">
+    
+    <!-- Background circle -->
+    <path
+        android:fillColor="#F3E5F5"
+        android:pathData="M150,150 m-140,0 a140,140 0 1,0 280,0 a140,140 0 1,0 -280,0" />
+    
+    <!-- Main person -->
+    <path
+        android:fillColor="#9C27B0"
+        android:pathData="M150,120 m-25,0 a25,25 0 1,0 50,0 a25,25 0 1,0 -50,0" />
+    
+    <!-- Plus sign for adding -->
+    <path
+        android:fillColor="#9C27B0"
+        android:pathData="M220,150 L230,150 L230,140 L240,140 L240,150 L250,150 L250,160 L240,160 L240,170 L230,170 L230,160 L220,160 Z" />
+        
+</vector> 
