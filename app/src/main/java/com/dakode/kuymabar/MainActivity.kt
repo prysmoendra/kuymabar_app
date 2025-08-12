@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.dakode.kuymabar.ui.screens.LoginScreen
+import com.dakode.kuymabar.ui.screens.MainScreen
 import com.dakode.kuymabar.ui.screens.OnboardingScreen
 import com.dakode.kuymabar.ui.screens.SignUpScreen
 import com.dakode.kuymabar.ui.screens.HomeScreen
@@ -55,6 +56,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("home") {
                             HomeScreen()
+                        }
+                        composable("main_app") {
+                            MainScreen()
                         }
                     }
                 }

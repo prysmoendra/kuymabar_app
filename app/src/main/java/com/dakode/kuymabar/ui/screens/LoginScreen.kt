@@ -67,8 +67,8 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
     LaunchedEffect(key1 = uiState.loginSuccess) {
         if (uiState.loginSuccess) {
             Toast.makeText(context, "Login Berhasil!", Toast.LENGTH_SHORT).show()
-            // Change "home" to your actual main screen route
-            navController.navigate("home") {
+            // Navigasi ke MainScreen setelah login berhasil
+            navController.navigate("main_app") {
                 popUpTo("login") { inclusive = true }
             }
             viewModel.onNavigationHandled() // Reset state setelah navigasi
