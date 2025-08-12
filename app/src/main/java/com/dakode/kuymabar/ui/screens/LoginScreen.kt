@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,15 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +31,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,13 +47,33 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.dakode.kuymabar.R
+import com.dakode.kuymabar.ui.viewmodel.LoginViewModel
+
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewModel()) {
     val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+
+    // Handle navigation after successful login
+    LaunchedEffect(key1 = uiState.loginSuccess) {
+        if (uiState.loginSuccess) {
+            Toast.makeText(context, "Login Berhasil!", Toast.LENGTH_SHORT).show()
+            // Change "home" to your actual main screen route
+            navController.navigate("home") {
+                popUpTo("login") { inclusive = true }
+            }
+            viewModel.onNavigationHandled() // Reset state setelah navigasi
+        }
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -79,18 +97,19 @@ fun LoginScreen(navController: NavController) {
 
             // Welcome Text
             Text(
-                text = "Selamat Datang, Kuy Mabar!",
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold
-                )
+                text = "Yuk Main Bareng!",
+                style = MaterialTheme.typography.headlineLarge
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
             // Email Field
             OutlinedTextField(
-                value = "",
-                onValueChange = { },
+                value = email,
+                onValueChange = {
+                    email = it
+                    viewModel.clearErrorMessage()
+                },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Email") },
                 leadingIcon = {
@@ -101,15 +120,19 @@ fun LoginScreen(navController: NavController) {
                     )
                 },
                 shape = RoundedCornerShape(12.dp),
-                singleLine = true
+                singleLine = true,
+                isError = uiState.errorMessage?.contains("email", ignoreCase = true) == true
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Password Field
             OutlinedTextField(
-                value = "",
-                onValueChange = { },
+                value = password,
+                onValueChange = {
+                    password = it
+                    viewModel.clearErrorMessage()
+                },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Kata Sandi") },
                 leadingIcon = {
@@ -122,16 +145,17 @@ fun LoginScreen(navController: NavController) {
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
-                            painter = if (passwordVisible) painterResource(id = R.drawable.eye_show_svgrepo) else painterResource(id = R.drawable.eye_hide_svgrepo),
-                            contentDescription = if (passwordVisible) "Tampilkan kata sandi" else "Sembunyikan kata sandi",
-                            modifier = Modifier.size(28.dp).padding(end = 4.dp),
+                            painter = if (passwordVisible) painterResource(id = R.drawable.eye_hide_svgrepo) else painterResource(id = R.drawable.eye_show_svgrepo),
+                            contentDescription = if (passwordVisible) "Sembunyikan kata sandi" else "Tampilkan kata sandi",
+                            modifier = Modifier.size(24.dp),
                             tint = Color.Gray
                         )
                     }
                 },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 shape = RoundedCornerShape(12.dp),
-                singleLine = true
+                singleLine = true,
+                isError = uiState.errorMessage?.contains("password", ignoreCase = true) == true || uiState.errorMessage?.contains("sandi", ignoreCase = true) == true
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -154,15 +178,24 @@ fun LoginScreen(navController: NavController) {
                 }
             }
 
+            // Error Message Display
+            if (uiState.errorMessage != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = uiState.errorMessage!!,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+
             Spacer(modifier = Modifier.height(12.dp))
 
             // Get Started Button
             Button(
                 onClick = {
-                    Log.d("LoginScreen", "Get started clicked")
-                    Toast.makeText(context, "Get started clicked", Toast.LENGTH_SHORT).show()
-                    // TODO: Navigate to main screen when authentication is implemented
-                    // navController.navigate("main") { popUpTo("login") { inclusive = true } }
+                    viewModel.loginUser(email, password)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -171,107 +204,37 @@ fun LoginScreen(navController: NavController) {
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFF97A00),
                     contentColor = Color.White
-                )
+                ),
+                enabled = !uiState.isLoading
             ) {
-                Text(
-                    text = "Get Started",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        letterSpacing = 1.5.sp,
-                        fontWeight = FontWeight.Bold
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(28.dp),
+                        color = Color.White,
+                        strokeWidth = 3.dp
                     )
-                )
+                } else {
+                    Text(
+                        text = "Get Started",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            letterSpacing = 1.5.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Or sign up with separator
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                HorizontalDivider(modifier = Modifier.weight(1f))
+            // Navigate to Sign Up
+            Spacer(modifier = Modifier.height(16.dp))
+
+            TextButton(onClick = { navController.navigate("signup") }) {
                 Text(
-                    text = "atau",
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    text = "Belum punya akun? Daftar",
+                    style = MaterialTheme.typography.bodyMedium
                 )
-                HorizontalDivider(modifier = Modifier.weight(1f))
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Social Sign Up Buttons
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                // Google Button
-                OutlinedButton(
-                    onClick = {
-                        Log.d("LoginScreen", "Google sign up clicked")
-                        Toast.makeText(context, "Google sign up clicked", Toast.LENGTH_SHORT).show()
-                    },
-                    modifier = Modifier.size(60.dp),
-                    shape = RoundedCornerShape(50.dp),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
-                ) {
-//                    Icon(
-//                        imageVector = Icons.Default.Home,
-//                        contentDescription = "Google",
-//                        modifier = Modifier.size(32.dp),
-//                        tint = Color.Gray
-//                    )
-                    Image(
-                        painter = painterResource(id = R.drawable.google_svgrepo),
-                        contentDescription = "Google",
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-
-                // Facebook Button
-                OutlinedButton(
-                    onClick = {
-                        Log.d("LoginScreen", "Facebook sign up clicked")
-                        Toast.makeText(context, "Facebook sign up clicked", Toast.LENGTH_SHORT).show()
-                    },
-                    modifier = Modifier.size(60.dp),
-                    shape = RoundedCornerShape(50.dp),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
-                ) {
-//                    Icon(
-//                        imageVector = Icons.Default.Person,
-//                        contentDescription = "Facebook",
-//                        modifier = Modifier.size(32.dp),
-//                        tint = Color.Gray
-//                    )
-                    Image(
-                        painter = painterResource(id = R.drawable.facebook_svgrepo),
-                        contentDescription = "Facebook",
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-
-                // Apple Button
-                OutlinedButton(
-                    onClick = {
-                        Log.d("LoginScreen", "Apple sign up clicked")
-                        Toast.makeText(context, "Apple sign up clicked", Toast.LENGTH_SHORT).show()
-                    },
-                    modifier = Modifier.size(60.dp),
-                    shape = RoundedCornerShape(50.dp),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
-                ) {
-//                    Icon(
-//                        imageVector = Icons.Default.Favorite,
-//                        contentDescription = "Apple",
-//                        modifier = Modifier.size(32.dp),
-//                        tint = Color.Gray
-//                    )
-                    Image(
-                        painter = painterResource(id = R.drawable.apple_svgrepo),
-                        contentDescription = "Apple",
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
             }
         }
     }

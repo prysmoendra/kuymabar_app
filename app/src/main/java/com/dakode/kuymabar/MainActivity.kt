@@ -11,10 +11,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.dakode.kuymabar.ui.screens.LoginScreen
 import com.dakode.kuymabar.ui.screens.OnboardingScreen
+import com.dakode.kuymabar.ui.screens.SignUpScreen
+import com.dakode.kuymabar.ui.screens.HomeScreen
 import com.dakode.kuymabar.ui.screens.SplashScreen
 import com.dakode.kuymabar.ui.theme.KuyMabarTheme
 import androidx.compose.material3.MaterialTheme
 
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +49,12 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("login") {
                             LoginScreen(navController)
+                        }
+                        composable("signup") {
+                            SignUpScreen(navController)
+                        }
+                        composable("home") {
+                            HomeScreen()
                         }
                     }
                 }

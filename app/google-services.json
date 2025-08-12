@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "846824712004",
+    "project_id": "kuy-mabar",
+    "storage_bucket": "kuy-mabar.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:846824712004:android:02fed46ed7a69f06375911",
+        "android_client_info": {
+          "package_name": "com.dakode.kuymabar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_jU0g1fXDsNofyH-1FkI1UzLxZ9riuDY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
