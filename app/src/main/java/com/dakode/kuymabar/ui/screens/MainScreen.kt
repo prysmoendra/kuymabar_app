@@ -66,7 +66,10 @@ fun MainScreen() {
                             // TODO: Implementasi untuk FAB
                         }
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Tambah")
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = "Tambah"
+                        )
                     }
                 }
             )
